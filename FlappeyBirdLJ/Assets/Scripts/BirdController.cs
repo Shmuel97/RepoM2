@@ -5,7 +5,9 @@ using UnityEngine;
 public class BirdController : MonoBehaviour
 {
     // Start is called before the first frame update
-    float flap;
+    public float flap;
+    public float gravity;
+    public int score;
     Rigidbody rb;
     
     void Start()
@@ -13,17 +15,31 @@ public class BirdController : MonoBehaviour
 
         //Debug.Log("Hola, soy el start de este GO: " + gameObject.name);
         rb = GetComponent<Rigidbody>();
-        flap = 3.0f;
+        score = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
+        rb.AddForce (Vector3.down * gravity);
         if (Input.GetKeyDown(KeyCode.Space)) {
             //Debug.Log("Espacio presionado " + gameObject.name);
-            rb.velocity = new Vector3(0, 0, 0);
-            rb.AddForce(0,flap,0,ForceMode.Impulse);
+            rb.velocity = Vector3.zero;
+            rb.AddForce(Vector3.up * flap, ForceMode.VelocityChange);
         }
         
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("He chocado con: "+collision.gameObject.name);
+        
+        Time.timeScale = 0.0f;
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        score++;
+        Debug.Log("SCORE: "+score);
     }
 }
